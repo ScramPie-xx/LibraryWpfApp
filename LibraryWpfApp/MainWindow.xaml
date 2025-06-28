@@ -1,7 +1,7 @@
 ﻿<Window x:Class="LibraryWpfApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Управление библиотечным абонементом" Height="450" Width="650"
+        Title="Управление библиотечным абонементом" Height="514" Width="835"
         WindowStartupLocation="CenterScreen" Background="#F5F5F5">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -18,8 +18,8 @@
                    HorizontalAlignment="Center" Foreground="#333"/>
 
         <StackPanel Grid.Row="1" Margin="0,10">
-            <TextBlock Text="Выберите абонента:" FontSize="16" Margin="0,0,0,5"/>
-            <ComboBox x:Name="SubscriberComboBox" Width="300" Height="30" HorizontalAlignment="Left" 
+            <TextBlock Text="Выберите абонемент:" FontSize="16" Margin="0,0,0,5"/>
+            <ComboBox x:Name="AbonementComboBox" Width="300" Height="30" HorizontalAlignment="Left" 
                       DisplayMemberPath="ФИО" SelectedValuePath="АбонентID"/>
         </StackPanel>
 
@@ -44,10 +44,10 @@
                 Background="#4CAF50" Foreground="White" FontSize="18" Click="IssueBook_Click"/>
 
         <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,10,0,0">
-            <Button Content="Выданные книги" Width="150" Height="40" Margin="0,0,10,0"
+            <Button Content="Выданные книги" Width="175" Height="40" Margin="0,0,10,0"
                     Background="#2196F3" Foreground="White" FontSize="16" Click="OpenIssuedBooks_Click"/>
-            <Button Content="Добавить абонемент" Width="161" Height="40"
-                    Background="#9C27B0" Foreground="White" FontSize="16" Click="OpenAddSubscriber_Click"/>
+            <Button Content="Добавить абонемент" Width="180" Height="40"
+                    Background="#9C27B0" Foreground="White" FontSize="16" Click="OpenAddAbonement_Click"/>
         </StackPanel>
 
         <TextBlock x:Name="StatusTextBlock" Grid.Row="6" FontSize="16" Margin="0,20,0,0" 

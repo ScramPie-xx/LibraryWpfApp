@@ -55,7 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="AddSubscriberWindow.xaml">
+    <Page Include="AddAbonementWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -71,8 +71,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="AddSubscriberWindow.xaml.cs">
-      <DependentUpon>AddSubscriberWindow.xaml</DependentUpon>
+    <Compile Include="AddAbonementWindow.xaml.cs">
+      <DependentUpon>AddAbonementWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

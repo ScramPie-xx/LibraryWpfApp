@@ -12,11 +12,11 @@ namespace LibraryWpfApp
         public MainWindow()
         {
             InitializeComponent();
-            LoadSubscribers();
+            LoadAbonements();
             LoadBooks();
         }
 
-        private void LoadSubscribers()
+        private void LoadAbonements()
         {
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -27,11 +27,11 @@ namespace LibraryWpfApp
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
-                    SubscriberComboBox.ItemsSource = dt.DefaultView;
+                    AbonementComboBox.ItemsSource = dt.DefaultView;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка загрузки абонентов: " + ex.Message);
+                    MessageBox.Show("Ошибка загрузки абонементов: " + ex.Message);
                 }
             }
         }
@@ -42,23 +42,41 @@ namespace LibraryWpfApp
             {
                 try
                 {
+                    // Проверка подключения
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT КнигаID, Название FROM Книги WHERE ДоступноЭкземпляров > 0", conn);
+                    MessageBox.Show("Подключение к БД успешно установлено.", "Отладка");
+
+                    // Упрощенный запрос для тестирования
+                    SqlCommand cmd = new SqlCommand("SELECT КнигаID, Название FROM Книги", conn); 
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+
+                    
+                    MessageBox.Show($"Загружено книг: {dt.Rows.Count}\nПервая книга: {(dt.Rows.Count > 0 ? dt.Rows[0]["Название"] : "Нет данных")}", "Отладка");
+                    if (dt.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Таблица Книги пуста или не содержит данных.", "Информация");
+                    }
+
                     BookComboBox.ItemsSource = dt.DefaultView;
+                    BookComboBox.DisplayMemberPath = "Название";
+                    BookComboBox.SelectedValuePath = "КнигаID";
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show($"Ошибка SQL: {ex.Message}\nНомер ошибки: {ex.Number}\nИсточник: {ex.Source}", "Ошибка подключения");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка загрузки книг: " + ex.Message);
+                    MessageBox.Show($"Общая ошибка загрузки книг: {ex.Message}\nПодробности: {ex.StackTrace}", "Ошибка");
                 }
             }
         }
 
         private void IssueBook_Click(object sender, RoutedEventArgs e)
         {
-            if (SubscriberComboBox.SelectedValue == null || BookComboBox.SelectedValue == null ||
+            if (AbonementComboBox.SelectedValue == null || BookComboBox.SelectedValue == null ||
                 IssueDatePicker.SelectedDate == null || DueDatePicker.SelectedDate == null)
             {
                 StatusTextBlock.Text = "Заполните все поля!";
@@ -72,7 +90,7 @@ namespace LibraryWpfApp
                     conn.Open();
                     SqlCommand cmd = new SqlCommand("ВыдатьКнигу", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@АбонентID", SubscriberComboBox.SelectedValue);
+                    cmd.Parameters.AddWithValue("@АбонентID", AbonementComboBox.SelectedValue);
                     cmd.Parameters.AddWithValue("@КнигаID", BookComboBox.SelectedValue);
                     cmd.Parameters.AddWithValue("@ДатаВыдачи", IssueDatePicker.SelectedDate);
                     cmd.Parameters.AddWithValue("@СрокВозврата", DueDatePicker.SelectedDate);
@@ -80,7 +98,7 @@ namespace LibraryWpfApp
                     StatusTextBlock.Text = "Книга успешно выдана!";
                     StatusTextBlock.Foreground = System.Windows.Media.Brushes.Green;
                     MessageBox.Show("Книга успешно выдана!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadBooks();
+                    LoadBooks(); // Обновляем список книг после выдачи
                 }
                 catch (Exception ex)
                 {
@@ -97,10 +115,10 @@ namespace LibraryWpfApp
             this.Close();
         }
 
-        private void OpenAddSubscriber_Click(object sender, RoutedEventArgs e)
+        private void OpenAddAbonement_Click(object sender, RoutedEventArgs e)
         {
-            AddSubscriberWindow addSubscriberWindow = new AddSubscriberWindow();
-            addSubscriberWindow.Show();
+            AddAbonementWindow addAbonementWindow = new AddAbonementWindow();
+            addAbonementWindow.Show();
             this.Close();
         }
     }
