@@ -1,0 +1,46 @@
+﻿<Window x:Class="LibraryWpfApp.IssuedBooksWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LibraryWpfApp"
+        Title="Выданные книги по абонементам" Height="550" Width="700"
+        WindowStartupLocation="CenterScreen" Background="#F5F5F5">
+    <Window.Resources>
+        <local:NullToBoolConverter x:Key="NullToBoolConverter" />
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Выданные книги по абонементам" FontSize="28" FontWeight="Bold" Margin="0,0,0,15" 
+                   HorizontalAlignment="Center" Foreground="#333"/>
+
+        <DataGrid x:Name="IssuedBooksDataGrid" Grid.Row="1" Margin="0,10" AutoGenerateColumns="False" 
+                  Height="300" SelectionMode="Single" SelectionChanged="IssuedBooksDataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID выдачи" Binding="{Binding ВыдачаID}" Width="100"/>
+                <DataGridTextColumn Header="Абонемент" Binding="{Binding ФИО}" Width="200"/>
+                <DataGridTextColumn Header="Книга" Binding="{Binding Название}" Width="200"/>
+                <DataGridTextColumn Header="Дата выдачи" Binding="{Binding ДатаВыдачи}" Width="120"/>
+                <DataGridTextColumn Header="Срок возврата" Binding="{Binding СрокВозврата}" Width="120"/>
+                <DataGridTextColumn Header="Дата возврата" Binding="{Binding ДатаВозврата}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Margin="0,10">
+            <TextBlock Text="Дата возврата:" FontSize="16" Margin="0,0,0,5"/>
+            <DatePicker x:Name="ReturnDatePicker" Width="200" Height="30" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Вернуть книгу" Width="150" Height="40" Margin="0,0,10,0"
+                    Background="#F44336" Foreground="White" FontSize="16" Click="ReturnBook_Click" 
+                    IsEnabled="{Binding ElementName=IssuedBooksDataGrid, Path=SelectedItem, Converter={StaticResource NullToBoolConverter}}"/>
+            <Button Content="Назад" Width="100" Height="40"
+                    Background="#9E9E9E" Foreground="White" FontSize="16" Click="BackToMain_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
