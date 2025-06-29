@@ -1,9 +1,9 @@
 ﻿<Window x:Class="LibraryWpfApp.AddAbonementWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Добавить абонемент" Height="600" Width="400"
+        Title="Добавить абонемент" Height="479" Width="596"
         WindowStartupLocation="CenterScreen" Background="#F5F5F5">
-    <Grid Margin="20">
+    <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -12,26 +12,24 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Добавить новый абонемент" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" 
-                   HorizontalAlignment="Center" Foreground="#333"/>
+        <TextBlock Text="Добавить новый абонемент" FontSize="32" FontWeight="Bold" Margin="0,0,0,20" 
+                   HorizontalAlignment="Center" Foreground="#1976D2"/>
 
         <StackPanel Grid.Row="1" Margin="0,10">
-            <TextBlock Text="ФИО:" FontSize="16" Margin="0,0,0,5"/>
-            <TextBox x:Name="AbonementFullNameTextBox" Width="250" Height="30" HorizontalAlignment="Left"/>
+            <TextBlock Text="ФИО:" FontSize="16" Margin="0,0,0,5" Foreground="#333"/>
+            <TextBox x:Name="AbonementFullNameTextBox" Width="250" Height="40"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0,10">
-            <TextBlock Text="Статус:" FontSize="16" Margin="0,0,0,5"/>
-            <ComboBox x:Name="StatusComboBox" Width="250" Height="30" HorizontalAlignment="Left">
+            <TextBlock Text="Статус:" FontSize="16" Margin="0,0,0,5" Foreground="#333"/>
+            <ComboBox x:Name="StatusComboBox" Width="250" Height="40">
                 <ComboBoxItem Content="Активен"/>
                 <ComboBoxItem Content="Неактивен"/>
             </ComboBox>
         </StackPanel>
 
-        <Button Grid.Row="3" Content="Добавить" Width="150" Height="40" Margin="0,20,0,0"
-                Background="#4CAF50" Foreground="White" FontSize="18" Click="AddAbonement_Click"/>
+        <Button Grid.Row="3" Content="Добавить" Width="150" Height="40" Margin="0,20,0,0" Click="AddAbonement_Click"/>
 
-        <Button Grid.Row="4" Content="Назад" Width="100" Height="40" Margin="0,20,0,0" HorizontalAlignment="Right"
-                Background="#9E9E9E" Foreground="White" FontSize="16" Click="BackToMain_Click"/>
+        <Button Grid.Row="4" Content="Назад" Width="100" Height="40" Margin="0,20,0,0" HorizontalAlignment="Right" Click="BackToMain_Click"/>
     </Grid>
 </Window>

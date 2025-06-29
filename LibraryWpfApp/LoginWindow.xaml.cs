@@ -15,41 +15,34 @@ namespace LibraryWpfApp
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = LoginTextBox.Text;
+            string login = LoginTextBox.Text;
             string password = PasswordBox.Password;
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
-                StatusTextBlock.Text = "Введите логин и пароль!";
-                return;
-            }
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 try
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT Роль FROM Персонал WHERE Логин = @u AND Пароль = @p", conn);
-                    cmd.Parameters.AddWithValue("@u", username);
-                    cmd.Parameters.AddWithValue("@p", password);
-                    var result = cmd.ExecuteScalar();
+                    string query = "SELECT ПерсоналID FROM Персонал WHERE Логин = @Login AND Пароль = @Password";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Login", login);
+                    cmd.Parameters.AddWithValue("@Password", password);
+                    object result = cmd.ExecuteScalar();
 
                     if (result != null)
                     {
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Show();
+                        MainMenuWindow mainMenu = new MainMenuWindow();
+                        mainMenu.Show();
                         this.Close();
                     }
                     else
                     {
                         StatusTextBlock.Text = "Неверный логин или пароль!";
-                        MessageBox.Show("Неверный логин или пароль. Попробуйте еще раз.", "Ошибка авторизации",
-                                        MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 catch (Exception ex)
                 {
-                    StatusTextBlock.Text = $"Ошибка: {ex.Message}";
+                    StatusTextBlock.Text = "Ошибка подключения: " + ex.Message;
                 }
             }
         }
