@@ -38,7 +38,7 @@ namespace LibraryWpfApp
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Абонемент успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     this.Close();
-                    mainWindow.ShowMain(); // Возвращаемся к MainWindow
+                    mainWindow.ShowMain(); 
                 }
                 catch (Exception ex)
                 {
