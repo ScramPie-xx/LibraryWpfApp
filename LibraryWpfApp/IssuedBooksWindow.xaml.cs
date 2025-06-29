@@ -48,7 +48,7 @@ namespace LibraryWpfApp
 
         private void IssuedBooksDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            // Логика выбора строки, если нужна
+            
         }
 
         private void ReturnBook_Click(object sender, RoutedEventArgs e)
