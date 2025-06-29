@@ -46,10 +46,10 @@ namespace LibraryWpfApp
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Книга успешно добавлена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    // Закрываем текущее окно и показываем MainMenuWindow
+                    
                     this.Close();
-                    mainMenu.Show(); // Показываем скрытое MainMenuWindow
-                    mainMenu.Activate(); // Активируем окно
+                    mainMenu.Show();
+                    mainMenu.Activate(); 
                 }
                 catch (SqlException ex)
                 {
@@ -65,8 +65,8 @@ namespace LibraryWpfApp
         private void BackToMain_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-            mainMenu.Show(); // Показываем скрытое MainMenuWindow
-            mainMenu.Activate(); // Активируем окно
+            mainMenu.Show();
+            mainMenu.Activate(); 
         }
     }
 }
