@@ -8,13 +8,13 @@ namespace LibraryWpfApp
     public partial class MainWindow : Window
     {
         private const string connStr = "Server=WIN-4C2OD1FPDPQ\\SQLEXPRESS;Database=УправлениеБиблиотекой;Trusted_Connection=True;";
-        private int currentStaffId; // Для хранения ID текущего персонала
+        private int currentStaffId; 
 
         public MainWindow()
         {
             InitializeComponent();
-            // Предположим, что ID персонала сохраняется после логина
-            currentStaffId = 1; // Замените на реальный ID из сессии после авторизации
+           
+            currentStaffId = 1; 
             LoadAbonements();
             LoadBooks();
         }
@@ -81,7 +81,7 @@ namespace LibraryWpfApp
                     cmd.ExecuteNonQuery();
 
                     StatusTextBlock.Text = "Книга успешно выдана!";
-                    LoadBooks(); // Обновляем список книг
+                    LoadBooks(); 
                 }
                 catch (Exception ex)
                 {
