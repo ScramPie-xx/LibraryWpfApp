@@ -8,23 +8,22 @@ namespace LibraryWpfApp
     public partial class AddAbonementWindow : Window
     {
         private const string connStr = "Server=WIN-4C2OD1FPDPQ\\SQLEXPRESS;Database=УправлениеБиблиотекой;Trusted_Connection=True;";
+        private MainWindow mainWindow;
 
-        public AddAbonementWindow()
+        public AddAbonementWindow(MainWindow mainWindow)
         {
             InitializeComponent();
+            this.mainWindow = mainWindow;
         }
 
         private void AddAbonement_Click(object sender, RoutedEventArgs e)
         {
-            string fullName = AbonementFullNameTextBox.Text.Trim();
-            string status = (StatusComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+            string fullName = AbonementFullNameTextBox.Text;
+            string status = StatusComboBox.SelectedItem != null ? (StatusComboBox.SelectedItem as ComboBoxItem).Content.ToString() : "Активен";
 
-            // Отладка: выводим введенные данные
-            MessageBox.Show($"ФИО: {fullName}, Статус: {status}", "Отладка данных");
-
-            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(status))
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                MessageBox.Show("Заполните все поля!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Введите ФИО!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -33,38 +32,24 @@ namespace LibraryWpfApp
                 try
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Абоненты (ФИО, Статус, ДатаРегистрации) VALUES (@ФИО, @Статус, @ДатаРегистрации)", conn);
-                    cmd.Parameters.AddWithValue("@ФИО", fullName);
-                    cmd.Parameters.AddWithValue("@Статус", status);
-                    cmd.Parameters.AddWithValue("@ДатаРегистрации", DateTime.Now); // Устанавливаем текущую дату
-                    int rowsAffected = cmd.ExecuteNonQuery(); // Проверяем, сколько строк изменено
-                    MessageBox.Show($"Rows affected: {rowsAffected}", "Отладка");
-
-                    if (rowsAffected > 0)
-                    {
-                        MessageBox.Show("Абонемент успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                        AbonementFullNameTextBox.Text = "";
-                        StatusComboBox.SelectedIndex = -1;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Не удалось добавить абонемент. Проверьте данные или права доступа.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    MessageBox.Show($"Ошибка SQL: {ex.Message}\nНомер ошибки: {ex.Number}\nИсточник: {ex.Source}\nСтек: {ex.StackTrace}", "Ошибка базы данных");
+                    SqlCommand cmd = new SqlCommand("INSERT INTO Абонементы (ФИО, Статус) VALUES (@FullName, @Status)", conn);
+                    cmd.Parameters.AddWithValue("@FullName", fullName);
+                    cmd.Parameters.AddWithValue("@Status", status);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Абонемент успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    this.Close();
+                    mainWindow.ShowMain(); // Возвращаемся к MainWindow
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Общая ошибка: {ex.Message}\nПодробности: {ex.StackTrace}", "Ошибка");
+                    MessageBox.Show("Ошибка добавления: " + ex.Message);
                 }
             }
         }
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainMenuWindow mainWindow = new MainMenuWindow();
             mainWindow.Show();
             this.Close();
         }

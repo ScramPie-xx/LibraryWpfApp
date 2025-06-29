@@ -2,8 +2,6 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace LibraryWpfApp
 {
@@ -24,86 +22,70 @@ namespace LibraryWpfApp
                 try
                 {
                     conn.Open();
-                    SqlCommand cmd = new SqlCommand(@"
-                        SELECT v.ВыдачаID, a.ФИО, k.Название, v.ДатаВыдачи, v.СрокВозврата, v.ДатаВозврата
-                        FROM ВыданныеКниги v
-                        JOIN Абоненты a ON v.АбонентID = a.АбонентID
-                        JOIN Книги k ON v.КнигаID = k.КнигаID
-                        WHERE v.ДатаВозврата IS NULL", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT v.ВыдачаID, a.ФИО AS АбонементФИО, k.Название, v.ДатаВыдачи, v.СрокВозврата, v.ДатаВозврата, p.ФИО AS ПерсоналФИО FROM Выдачи v JOIN Абонементы a ON v.АбонементID = a.АбонементID JOIN Книги k ON v.КнигаID = k.КнигаID JOIN Персонал p ON v.ПерсоналID = p.ПерсоналID", conn);
                     SqlDataAdapter da = new SqlDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     da.Fill(dt);
+
+                    MessageBox.Show($"Загружено записей: {dt.Rows.Count}", "Отладка");
                     if (dt.Rows.Count == 0)
                     {
-                        MessageBox.Show("Нет выданных книг для отображения.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Нет выданных книг для отображения.", "Информация");
                     }
+
                     IssuedBooksDataGrid.ItemsSource = dt.DefaultView;
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show($"Ошибка SQL: {ex.Message}", "Ошибка базы данных");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Ошибка загрузки выданных книг: " + ex.Message);
+                    MessageBox.Show($"Общая ошибка: {ex.Message}", "Ошибка");
                 }
             }
         }
 
-        private void IssuedBooksDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void IssuedBooksDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            // Этот метод оставляем пустым, так как IsEnabled управляется конвертером
+            // Логика выбора строки, если нужна
         }
 
         private void ReturnBook_Click(object sender, RoutedEventArgs e)
         {
-            if (IssuedBooksDataGrid.SelectedItem is DataRowView selectedRow)
+            if (IssuedBooksDataGrid.SelectedItem == null)
             {
-                int issueId = (int)selectedRow["ВыдачаID"];
-                if (ReturnDatePicker.SelectedDate == null)
+                MessageBox.Show("Выберите запись для возврата!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var row = (IssuedBooksDataGrid.SelectedItem as DataRowView).Row;
+            int выдачаID = Convert.ToInt32(row["ВыдачаID"]);
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                try
                 {
-                    MessageBox.Show("Выберите дату возврата!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand("RETURN_BOOK", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ВыдачаID", выдачаID);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Книга успешно возвращена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    LoadIssuedBooks();
                 }
-
-                DateTime returnDate = ReturnDatePicker.SelectedDate.Value;
-
-                using (SqlConnection conn = new SqlConnection(connStr))
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        conn.Open();
-                        SqlCommand cmd = new SqlCommand("ВернутьКнигу", conn);
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@ВыдачаID", issueId);
-                        cmd.Parameters.AddWithValue("@ДатаВозврата", returnDate);
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Книга успешно возвращена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                        LoadIssuedBooks();
-                        ReturnDatePicker.SelectedDate = null; // Сброс даты после возврата
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка возврата книги: " + ex.Message);
-                    }
+                    MessageBox.Show("Ошибка возврата книги: " + ex.Message);
                 }
             }
         }
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainMenuWindow mainWindow = new MainMenuWindow();
             mainWindow.Show();
             this.Close();
-        }
-    }
-
-    public class NullToBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value != null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }
